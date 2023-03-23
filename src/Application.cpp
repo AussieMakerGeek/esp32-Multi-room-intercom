@@ -91,8 +91,14 @@ void Application::begin()
   // connected so show a solid green light
   m_indicator_led->set_default_color(0x00ff00);
   m_indicator_led->set_is_flashing(false, 0x00ff00);
-  // setup the transmit button
-  pinMode(GPIO_TRANSMIT_BUTTON, INPUT_PULLDOWN);
+  
+  // setup the transmit buttons
+  pinMode(GPIO_TRANSMIT_BUTTON0, INPUT_PULLUP);
+  pinMode(GPIO_TRANSMIT_BUTTON1, INPUT_PULLUP);
+  pinMode(GPIO_TRANSMIT_BUTTON2, INPUT_PULLUP);
+  pinMode(GPIO_TRANSMIT_BUTTON3, INPUT_PULLUP);
+  pinMode(GPIO_TRANSMIT_BUTTON4, INPUT_PULLUP);
+  
   // start off with i2S output running
   m_output->start(SAMPLE_RATE);
   // start the main task for the application
@@ -108,9 +114,30 @@ void Application::loop()
   while (true)
   {
     // do we need to start transmitting?
-    if (digitalRead(GPIO_TRANSMIT_BUTTON))
+    if (digitalRead(GPIO_TRANSMIT_BUTTON0) == LOW || digitalRead(GPIO_TRANSMIT_BUTTON1) == LOW || digitalRead(GPIO_TRANSMIT_BUTTON2) == LOW || digitalRead(GPIO_TRANSMIT_BUTTON3) == LOW || digitalRead(GPIO_TRANSMIT_BUTTON4) == LOW)
     {
-      Serial.println("Started transmitting");
+      uint8_t temp_header[TRANSPORT_HEADER_SIZE];
+
+      if (digitalRead(GPIO_TRANSMIT_BUTTON0) == LOW){
+        temp_header[0] = 0x00;
+      }
+      if (digitalRead(GPIO_TRANSMIT_BUTTON1) == LOW){
+        temp_header[0] = 0x01;
+      }
+      if (digitalRead(GPIO_TRANSMIT_BUTTON2) == LOW){
+        temp_header[0] = 0x02;
+      }
+      if (digitalRead(GPIO_TRANSMIT_BUTTON3) == LOW){
+        temp_header[0] = 0x03;
+      }
+      if (digitalRead(GPIO_TRANSMIT_BUTTON4) == LOW){
+        temp_header[0] = 0x04;
+      }
+      
+      m_transport->set_header(TRANSPORT_HEADER_SIZE,temp_header);
+
+      Serial.print("Started transmitting on ");
+      Serial.println(temp_header[0],HEX);
       m_indicator_led->set_is_flashing(true, 0xff0000);
       // stop the output as we're switching into transmit mode
       m_output->stop();
@@ -118,7 +145,7 @@ void Application::loop()
       m_input->start();
       // transmit for at least 1 second or while the button is pushed
       unsigned long start_time = millis();
-      while (millis() - start_time < 1000 || digitalRead(GPIO_TRANSMIT_BUTTON))
+      while (millis() - start_time < 1000 || digitalRead(GPIO_TRANSMIT_BUTTON0) == LOW || digitalRead(GPIO_TRANSMIT_BUTTON1) == LOW || digitalRead(GPIO_TRANSMIT_BUTTON2) == LOW || digitalRead(GPIO_TRANSMIT_BUTTON3) == LOW || digitalRead(GPIO_TRANSMIT_BUTTON4) == LOW)
       {
         // read samples from the microphone
         int samples_read = m_input->read(samples, 128);
@@ -139,7 +166,7 @@ void Application::loop()
     Serial.print("Started Receiving");
     digitalWrite(I2S_SPEAKER_SD_PIN, HIGH);
     unsigned long start_time = millis();
-    while (millis() - start_time < 1000 || !digitalRead(GPIO_TRANSMIT_BUTTON))
+    while (millis() - start_time < 1000 && digitalRead(GPIO_TRANSMIT_BUTTON0) == HIGH && digitalRead(GPIO_TRANSMIT_BUTTON1)  == HIGH && digitalRead(GPIO_TRANSMIT_BUTTON2) == HIGH && digitalRead(GPIO_TRANSMIT_BUTTON3) == HIGH && digitalRead(GPIO_TRANSMIT_BUTTON4) == HIGH)
     {
       // read from the output buffer (which should be getting filled by the transport)
       m_output_buffer->remove_samples(samples, 128);
