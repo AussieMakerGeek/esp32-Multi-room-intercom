@@ -3,7 +3,7 @@ This project is a work-in-progress (currently non-functional test/beta), multi-r
 
 It uses i2S microphones and amplifiers, and transmits the audio over UDP broadcast
 
-Platform.IO is not an environment I am used to coding in. There may be cringeworthy code in my changes. If you spot something, please point it out.
+Platform.IO is not an environment I am not used to coding in. There may be cringeworthy code in my changes. If you spot something, please point it out.
 
 The theory of operation is to have 5 buttons on the console for 4 rooms and a 'broadcast' button. Each unit has it's own room number and will only play messages destined for it, or the broadcast address.
 
