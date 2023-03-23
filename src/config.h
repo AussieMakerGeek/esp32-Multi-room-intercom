@@ -3,14 +3,14 @@
 #include <driver/gpio.h>
 
 // WiFi credentials
-#define WIFI_SSID << YOUR_SSID >>
-#define WIFI_PSWD << YOUR_PASSWORD >>
+#define WIFI_SSID "MyWifi"
+#define WIFI_PSWD "Mypassword"
 
 // sample rate for the system
 #define SAMPLE_RATE 16000
 
 // are you using an I2S microphone - comment this if you want to use an analog mic and ADC input
-// #define USE_I2S_MIC_INPUT
+#define USE_I2S_MIC_INPUT
 
 // I2S Microphone Settings
 
@@ -33,8 +33,12 @@
 // Shutdown line if you have this wired up or -1 if you don't
 #define I2S_SPEAKER_SD_PIN GPIO_NUM_22
 
-// transmit button
-#define GPIO_TRANSMIT_BUTTON 23
+// transmit buttons
+#define GPIO_TRANSMIT_BUTTON0 GPIO_NUM_25  //ID0
+#define GPIO_TRANSMIT_BUTTON1 GPIO_NUM_26  //ID1
+#define GPIO_TRANSMIT_BUTTON2 GPIO_NUM_27  //ID2
+#define GPIO_TRANSMIT_BUTTON3 GPIO_NUM_32  //ID3
+#define GPIO_TRANSMIT_BUTTON4 GPIO_NUM_33  //ID4
 
 // Which LED pin do you want to use? TinyPico LED or the builtin LED of a generic ESP32 board?
 // Comment out this line to use the builtin LED of a generic ESP32 board
@@ -49,8 +53,9 @@
 
 // In case all transport packets need a header (to avoid interference with other applications or walkie talkie sets), 
 // specify TRANSPORT_HEADER_SIZE (the length in bytes of the header) in the next line, and define the transport header in config.cpp
-#define TRANSPORT_HEADER_SIZE 0
+#define TRANSPORT_HEADER_SIZE 1
 extern uint8_t transport_header[TRANSPORT_HEADER_SIZE];
+//extern uint8_t broadcast_header[TRANSPORT_HEADER_SIZE];
 
 
 // i2s config for using the internal ADC
