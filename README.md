@@ -11,6 +11,15 @@ A single byte header is applied to every packet sent, ranging from 0x00 (broadca
 
 Audio data is transmitted over UDP broadcast
 
+
+# Working
+Confirmed Transmit to the 4 channels + broadcast via wireshark
+
+# Not Tested but appears to work
+Receive of only the corresponding channel
+
+As of 23/3/2023 I am still waiting on some i2s microphones to arrive from china.  Once i get them I should be able to fully test
+
 # Setup
 
 Everything is configured from the `src/config.h` file.
