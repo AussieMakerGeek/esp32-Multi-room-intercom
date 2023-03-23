@@ -2,6 +2,7 @@
 #include <AsyncUDP.h>
 #include "UdpTransport.h"
 #include "OutputBuffer.h"
+#include "config.h"
 
 const int MAX_UDP_SIZE = 1436;
 
@@ -18,9 +19,10 @@ bool UdpTransport::begin()
   {
     udp->onPacket([this](AsyncUDPPacket packet)
                   {
+                    uint8_t broadcast_header[] = {0x00};
                     // our packets contain unsigned 8 bit PCM samples
                     // so we can push them straight into the output buffer
-                    if ((packet.length() > this->m_header_size) && (packet.length() <= MAX_UDP_SIZE) && (memcmp(packet.data(), this->m_buffer, this->m_header_size) == 0)) 
+                    if ((packet.length() > this->m_header_size) && (packet.length() <= MAX_UDP_SIZE) && ((memcmp(packet.data(), this->m_buffer, this->m_header_size) == 0) || (memcmp(packet.data(), broadcast_header, this->m_header_size) == 0) )) 
                     {
                       this->m_output_buffer->add_samples(packet.data() + m_header_size, packet.length() - m_header_size);
                     }
